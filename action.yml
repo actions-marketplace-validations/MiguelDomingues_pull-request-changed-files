@@ -1,0 +1,46 @@
+name: 'Fetch list of Pull Request changed files'
+
+inputs:
+  repository:
+    description: 'The repository in format User/Repository'
+    required: true
+  pull-request:
+    description: 'The pull request number'
+    required: true
+
+outputs:
+  files:
+    description: "List of Files"
+    value: ${{ steps.random-number-generator.outputs.random-number }}
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Run goodbye.sh
+      shell: bash
+      run: |
+        echo "Fetch modified files for Pull Request #${{ inputs.pull-request }}"
+        echo "Repository ${{ inputs.repository }}"
+
+        PAGE=1
+        TOTAL=0
+        PREV_TOTAL=0
+
+        rm -f modified-files-temp.txt
+        touch modified-files-temp.txt
+
+        while [  $PAGE -eq 1 ] || [ $PREV_TOTAL -lt $TOTAL ]; do
+            echo "Page: $PAGE"
+            gh api "repos/${{ inputs.repository }}/pulls/${{ inputs.pull-request }}/files?per_page=100&page=$PAGE" -q ".[].filename" >> modified-files-temp.txt
+            PREV_TOTAL=$TOTAL
+            TOTAL=$(cat modified-files-temp.txt | wc -l)
+            echo "Files count $PREV_TOTAL -> $TOTAL"
+            let PAGE=PAGE+1
+        done
+        echo "files<<EOF" >> $GITHUB_OUTPUT
+        cat modified-files-temp.txt >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        rm modified-files-temp.txt
+
+
