@@ -1,4 +1,5 @@
 name: 'Fetch list of Pull Request changed files'
+description: 'Retrieve the list of changed files in a Pull Request'
 
 inputs:
   repository:
