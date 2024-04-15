@@ -40,6 +40,7 @@ runs:
             echo "Files count $PREV_TOTAL -> $TOTAL"
             let PAGE=PAGE+1
         done
+        cat modified-files-temp.txt
         echo "files<<EOF" >> $GITHUB_OUTPUT
         cat modified-files-temp.txt >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
