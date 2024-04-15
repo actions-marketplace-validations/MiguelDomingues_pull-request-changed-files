@@ -12,12 +12,14 @@ inputs:
 outputs:
   files:
     description: "List of Files"
+    value: ${{ steps.changed.files }}
 
 runs:
   using: "composite"
   steps:
 
     - name: Run goodbye.sh
+      id: changed
       shell: bash
       run: |
         echo "Fetch modified files for Pull Request #${{ inputs.pull-request }}"
